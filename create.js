@@ -57,12 +57,20 @@ const svgYellowBg = (options) => {
   return `<path fill="${color}" d="${d.map(s => s.join(' ')).join('\n')}"/>`
 }
 
-const svgEyeBrowMouth = (options) => {
+const svgMouth = (options) => {
   const color = '#664500'
   const d = [
     ['M', 22, 27],
     ['c', 0, 2.763, -1.791, 3, -4, 3, -2.21, 0, -4, -.237, -4, -3, 0, -2.761, 1.79, -6, 4, -6, 2.209, 0, 4, 3.239, 4, 6],
     ['z',],
+  ].map(scaleSvgD(options))
+  return `<path fill="${color}" d="${d.map(s => s.join(' ')).join('\n')}"/>`
+}
+
+const svgEyeBrows = (options) => {
+  const color = '#664500'
+  const d = [
+    ['M', 22, 27],
     ['m', 8, -12],
     ['c', -.124, 0, -.25, -.023, -.371, -.072, -5.229, -2.091, -7.372, -5.241, -7.461, -5.374, -.307, -.46, -.183, -1.081, .277, -1.387, .459, -.306, 1.077, -.184, 1.385, .274, .019, .027, 1.93, 2.785, 6.541, 4.629, .513, .206, .763, .787, .558, 1.3, -.157, .392, -.533, .63, -.929, .63],
     ['z',],
@@ -132,20 +140,21 @@ const make = ({ scale = 1, topleftX = 0, topleftY = 0 }) => {
     svgHeader({ scale }),
     svgYellowBg({scale, topleftX, topleftY}),
     ...makeHelper({ scale, topleftX, topleftY }),
-    ...makeHelper({ scale: scale/2, topleftX: 1, topleftY: 1  }),
-    ...makeHelper({ scale: scale/2, topleftX: 17, topleftY: 1  }),
+    ...makeHelper({ scale: scale*1/3, topleftX: 4, topleftY: 4+(11/16) }, true),
+    ...makeHelper({ scale: scale*1/3, topleftX: 20 , topleftY: 4+(11/16)  }, true),
     svgFooter(),
   ].join('\n')
 }
 
 const makeHelper = (options, isTerminal = false) => {
   return [
-    svgEyeBrowMouth(options),
+    svgMouth(options),
+    isTerminal ? svgEyeBrows(options) : null,
     svgVertTears(options),
-    svgEye(options),
+    isTerminal ? svgEye(options) : null,
     svgHorizTears(options),
     svgTongue(options),
-  ].map(s => `\t${s}`)
+  ].filter(s => Boolean(s)).map(s => `\t${s}`)
 }
 
 
