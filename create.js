@@ -141,19 +141,17 @@ const make = () => {
   let topleftX = 0;
   let topleftY = 0;
 
-  const recursionLevels = 2;
+  const recursionLevels = 4;
 
   const svgLayers = [
     svgHeader({ scale }),
-    svgYellowBg({scale, topleftX, topleftY}),
-    
+    svgYellowBg({ scale, topleftX, topleftY }),
+
   ];
 
-  // for(let i=0; i<recursionLevels; i++) {
-    svgLayers.push(...makeHelper({
-      scale, topleftX, topleftY,
-    }, 0, recursionLevels))
-  // }
+  svgLayers.push(...makeHelper({
+    scale, topleftX, topleftY,
+  }, 0, recursionLevels))
 
   return [
     ...svgLayers,
@@ -161,24 +159,24 @@ const make = () => {
   ].join('\n')
 }
 
-const makeHelper = ({scale, topleftX, topleftY}, depth, maxDepth) => {
-  const isTerminal = depth === maxDepth-1;
-  console.error({depth, scale, topleftX, topleftY})
+const makeHelper = ({ scale, topleftX, topleftY }, depth, maxDepth) => {
+  const isTerminal = depth === maxDepth - 1;
+  console.error({ depth, scale, topleftX, topleftY })
 
-  const childScale = scale * 1/3;
-  const childSize = 36 * childScale; // 12
+  const childScale = scale * 1 / 3;
+  const childSize = 36 * childScale;
   const childOffset = childSize * childScale;
   const childTopleftX1 = topleftX + (childOffset * scale)
   const childTopleftX2 = topleftX + (childSize * 2) - (childOffset * scale)
-  const childTopleftY = 4 + 11/16
-  
-  console.error({depth, childScale, childSize, childOffset, childTopleftX1, childTopleftX2, childTopleftY})
+  const childTopleftY = topleftY + (childOffset * 2) - (childOffset * scale)
+
+  console.error({ depth, childScale, childSize, childOffset, childTopleftX1, childTopleftX2, childTopleftY })
 
   const baseLayers = [
     ...makeHelperLayers({ scale, topleftX, topleftY }, isTerminal),
   ]
 
-  if(!isTerminal) {
+  if (!isTerminal) {
     baseLayers.push(
       ...makeHelper({ scale: childScale, topleftX: childTopleftX1, topleftY: childTopleftY, }, depth + 1, maxDepth),
       ...makeHelper({ scale: childScale, topleftX: childTopleftX2, topleftY: childTopleftY, }, depth + 1, maxDepth),
