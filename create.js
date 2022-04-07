@@ -141,12 +141,11 @@ const make = () => {
   let topleftX = 0;
   let topleftY = 0;
 
-  const recursionLevels = 4;
+  const recursionLevels = 10;
 
   const svgLayers = [
     svgHeader({ scale }),
     svgYellowBg({ scale, topleftX, topleftY }),
-
   ];
 
   svgLayers.push(...makeHelper({
@@ -161,16 +160,16 @@ const make = () => {
 
 const makeHelper = ({ scale, topleftX, topleftY }, depth, maxDepth) => {
   const isTerminal = depth === maxDepth - 1;
-  console.error({ depth, scale, topleftX, topleftY })
+  // console.error({ depth, scale, topleftX, topleftY })
 
   const childScale = scale * 1 / 3;
   const childSize = 36 * childScale;
   const childOffset = childSize * childScale;
-  const childTopleftX1 = topleftX + (childOffset * scale)
+  const childTopleftX1 = topleftX + (childOffset)
   const childTopleftX2 = topleftX + (childSize * 2) - (childOffset * scale)
   const childTopleftY = topleftY + (childOffset * 2) - (childOffset * scale)
 
-  console.error({ depth, childScale, childSize, childOffset, childTopleftX1, childTopleftX2, childTopleftY })
+  // console.error({ depth, childScale, childSize, childOffset, childTopleftX1, childTopleftX2, childTopleftY })
 
   const baseLayers = [
     ...makeHelperLayers({ scale, topleftX, topleftY }, isTerminal),
