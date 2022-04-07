@@ -135,18 +135,61 @@ const svgTongue = (options) => {
 }
 
 
-const make = ({ scale = 1, topleftX = 0, topleftY = 0 }) => {
-  return [
+const make = () => {
+
+  let scale = 1;
+  let topleftX = 0;
+  let topleftY = 0;
+
+  const recursionLevels = 2;
+
+  const svgLayers = [
     svgHeader({ scale }),
     svgYellowBg({scale, topleftX, topleftY}),
-    ...makeHelper({ scale, topleftX, topleftY }),
-    ...makeHelper({ scale: scale*1/3, topleftX: 4, topleftY: 4+(11/16) }, true),
-    ...makeHelper({ scale: scale*1/3, topleftX: 20 , topleftY: 4+(11/16)  }, true),
+    
+  ];
+
+  // for(let i=0; i<recursionLevels; i++) {
+    svgLayers.push(...makeHelper({
+      scale, topleftX, topleftY,
+    }, 0, recursionLevels))
+  // }
+
+  return [
+    ...svgLayers,
     svgFooter(),
   ].join('\n')
 }
 
-const makeHelper = (options, isTerminal = false) => {
+const makeHelper = ({scale, topleftX, topleftY}, depth, maxDepth) => {
+  const isTerminal = depth === maxDepth-1;
+  console.error({depth, scale, topleftX, topleftY})
+
+  const childScale = scale * 1/3;
+  const childSize = 36 * childScale; // 12
+  const childOffset = childSize * childScale;
+  const childTopleftX1 = topleftX + (childOffset * scale)
+  const childTopleftX2 = topleftX + (childSize * 2) - (childOffset * scale)
+  const childTopleftY = 4 + 11/16
+  
+  console.error({depth, childScale, childSize, childOffset, childTopleftX1, childTopleftX2, childTopleftY})
+
+  const baseLayers = [
+    ...makeHelperLayers({ scale, topleftX, topleftY }, isTerminal),
+  ]
+
+  if(!isTerminal) {
+    baseLayers.push(
+      ...makeHelper({ scale: childScale, topleftX: childTopleftX1, topleftY: childTopleftY, }, depth + 1, maxDepth),
+      ...makeHelper({ scale: childScale, topleftX: childTopleftX2, topleftY: childTopleftY, }, depth + 1, maxDepth),
+    )
+  }
+
+  return baseLayers;
+}
+
+
+const makeHelperLayers = (options, isTerminal = false) => {
   return [
     svgMouth(options),
     isTerminal ? svgEyeBrows(options) : null,
@@ -160,8 +203,4 @@ const makeHelper = (options, isTerminal = false) => {
 
 // console.log(make(1))
 
-console.log(make({
-  scale: 1,
-  // topleftX: 10,
-  // topleftY: 10,
-}))
+console.log(make())
